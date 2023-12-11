@@ -1,15 +1,10 @@
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import BirthdayCardGenerator from "./BirthdayCardGenerator";
 
 function App() {
-  const [news, setNews] = useState{null}
-  
-  const useEffect(()=>{
-
-  }, [])
 
   return (
    <div>
-
+    <BirthdayCardGenerator/>
    </div>
   );
 }
