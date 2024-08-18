@@ -23,6 +23,14 @@ const Container = styled.div`
   padding: 2rem 4rem;
 `;
 
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+`;
+
 const ColumnContainer = styled.div`
   display: flex;
   gap: 3rem;
@@ -89,6 +97,39 @@ const MealImage = styled.img`
   height: 12rem;
   height: auto;
   border-radius: 0.4rem;
+`;
+
+const MealDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MainTitle = styled.h1`
+  font-size: 2rem;
+  margin-block: 1rem;
+`;
+
+const Title = styled.h2`
+  font-size: 1.5rem;
+  margin-block: 0.5rem;
+`;
+
+const Subtitle = styled.h3`
+  font-size: 1.25rem;
+  margin-block: 0.5rem;
+`;
+
+const Text = styled.p`
+  font-size: 1rem;
+  margin-block: 0.5rem;
+`;
+
+const IngredientList = styled.ul`
+  margin-block: 0.5rem;
+`;
+
+const IngredientItem = styled.li`
+  margin-block: 0.25rem;
 `;
 
 // This is the MealApp component that will be rendered in the App component
@@ -158,81 +199,89 @@ export default function MealApp() {
   return (
     <Webpage>
       <Container>
-        <div>
-          <h1> What should we have for dinner? 🍽️ </h1>
+        <TopContainer>
+          <MainTitle> What should we have for dinner? 🍽️ </MainTitle>
 
-            {/* Search bar and button to fetch meals based on an ingredient */}
-            <SearchContainer>
-                <SearchInput
-                    type="text"
-                    value={ingredient}
-                    onChange={(e) => setIngredient(e.target.value)}
-                    placeholder="Enter main ingredient"
+          {/* Search bar and button to fetch meals based on an ingredient */}
+          <SearchContainer>
+            <SearchInput
+              type="text"
+              value={ingredient}
+              onChange={(e) => setIngredient(e.target.value)}
+              placeholder="Enter main ingredient"
+            />
+
+            <Button onClick={fetchMeals}> Search </Button>
+          </SearchContainer>
+            
+          {/* Button to fetch a random meal */}
+          <Button onClick={fetchRandomMeal}> Get a random meal </Button>
+        </TopContainer>
+
+        <ColumnContainer>
+          <Column>
+            <Title>Results</Title>
+
+            {/* Display the list of meals returned from the API */} 
+            {meals.length > 0 ? (
+              <MealList>
+                {meals.map((meal) => (
+                  <MealItem>
+                    <MealListImage
+                      src={meal.strMealThumb}
+                      alt={meal.strMeal}
                     />
 
-                <Button onClick={fetchMeals}> Search </Button>
-            </SearchContainer>
-              
-            {/* Button to fetch a random meal */}
-            <Button onClick={fetchRandomMeal}> Get a random meal </Button>
-          </div>
+                    <Text>{meal.strMeal}</Text>
 
-          <ColumnContainer>
-            <Column>
-              <h2>Results</h2>
+                    {/* Button to view details of the meal */}
+                    <Button onClick={() => fetchMealDetails(meal)}> View Details </Button>
+                  </MealItem>
+                ))}
+              </MealList>
+            ) : (
+              <Text>No results found</Text>
+            )}
+          </Column>
 
-              {/* Display the list of meals returned from the API */} 
-              {meals.length > 0 ? (
-                <MealList>
-                  {meals.map((meal) => (
-                    <MealItem>
-                      <MealListImage
-                        src={meal.strMealThumb}
-                        alt={meal.strMeal}
-                        />
+          <Column>
+            {/* Display detailed information about the selected meal */}
+            {selectedMeal && (
+              <MealDetailsContainer>
+                <Title>Details</Title>
 
-                      <span>{meal.strMeal}</span>
+                <Subtitle>{selectedMeal.strMeal}</Subtitle>
 
-                      {/* Button to view details of the meal */}
-                      <Button onClick={() => fetchMealDetails(meal)}> View Details </Button>
-                    </MealItem>
+                <MealImage
+                  src={selectedMeal.strMealThumb}
+                  alt={selectedMeal.strMeal}
+                />
+
+                <Subtitle>Category:</Subtitle> 
+
+                <Text>{selectedMeal.strCategory}</Text>
+
+                <Subtitle>Origin:</Subtitle> 
+
+                <Text>{selectedMeal.strArea}</Text>
+
+                <Subtitle>Ingredients</Subtitle>
+
+                <IngredientList>
+                  {getIngredientsAndMeasurements(selectedMeal).map((item, index) => (
+                    <IngredientItem key={index}>
+                      {item}
+                    </IngredientItem>
                   ))}
-                </MealList>
-              ) : (
-                <p>No results found</p>
-              )}
-            </Column>
+                </IngredientList>
 
-            <Column>
-              {/* Display detailed information about the selected meal */}
-              {selectedMeal && (
-                <div className="mt-6">
-                  <h2>Details</h2>
-                  <h4 className="text-xl font-bold">{selectedMeal.strMeal}</h4>
-                  <MealImage
-                    src={selectedMeal.strMealThumb}
-                    alt={selectedMeal.strMeal}
-                  />
-                  <p>
-                    <strong>Category:</strong> {selectedMeal.strCategory}
-                  </p>
-                  <p>
-                    <strong>Origin:</strong> {selectedMeal.strArea}
-                  </p>
-                  <strong>Ingredients</strong>
-                    <ul>
-                      {getIngredientsAndMeasurements(selectedMeal).map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  <p>
-                    <strong>Instructions</strong>
-                  </p>
-                  <p>{selectedMeal.strInstructions}</p>
-                </div>
-              )}
-            </Column>
-          </ColumnContainer>
+                <Subtitle>Instructions</Subtitle>
+                
+                <Text>{selectedMeal.strInstructions}</Text>
+              </MealDetailsContainer>
+            )}
+          </Column>
+        </ColumnContainer>
       </Container>
     </Webpage>
   );
