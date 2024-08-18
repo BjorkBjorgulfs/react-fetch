@@ -1,10 +1,10 @@
-import BirthdayCardGenerator from "./BirthdayCardGenerator";
+import MealApp from "./mealApp";
 
 function App() {
 
   return (
    <div>
-    <BirthdayCardGenerator/>
+    <MealApp/>
    </div>
   );
 }
